@@ -1,4 +1,4 @@
-# 3D Periodic Table
+# Periodic Table
 
 An interactive 3D visualization of the periodic table of elements built with Three.js. Experience chemistry in a video game-inspired UI with a dark, atmospheric design featuring blueish, yellowish, pinkish, and purplish color schemes.
 

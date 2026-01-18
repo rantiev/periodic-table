@@ -1,8 +1,12 @@
 {
-  "name": "periodic-table-3d",
+  "name": "periodic-table",
   "version": "1.0.0",
   "description": "A 3D interactive periodic table visualization using Three.js",
   "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rantiev/periodic-table.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
