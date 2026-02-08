@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electron Configuration - 3D Periodic Table</title>
+  <link rel="stylesheet" href="/styles/main.scss">
+  <style>
+    .page-link {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, rgba(74, 144, 226, 0.3) 0%, rgba(155, 89, 182, 0.3) 100%);
+      border: 2px solid rgba(74, 144, 226, 0.6);
+      border-radius: 6px;
+      color: #e0e0e0;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .page-link:hover {
+      background: linear-gradient(135deg, rgba(74, 144, 226, 0.5) 0%, rgba(155, 89, 182, 0.5) 100%);
+      transform: translateY(-2px);
+    }
+    #info {
+      width: 310px !important;
+      max-width: 310px !important;
+      min-width: 310px !important;
+    }
+    #atom-container {
+      width: calc(100% - 310px - 550px - 40px);
+      height: calc(50% - 20px);
+      position: absolute;
+      top: 20px;
+      left: 350px;
+    }
+    #scheme-container {
+      width: calc(550px - 20px);
+      height: calc(50% - 20px);
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(26, 26, 46, 0.6);
+      backdrop-filter: blur(5px);
+      padding: 20px;
+      overflow-y: auto;
+    }
+    #atom-container::before {
+      content: "3D Atom Visualization";
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #4a90e2;
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 10;
+    }
+    .scheme-title {
+      color: #4a90e2;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+    }
+    .electron-levels {
+      position: relative;
+      font-size: 11px;
+      min-height: 250px;
+    }
+    .row-label {
+      position: absolute;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #4a90e2;
+      width: 30px;
+      height: 24px;
+      font-size: 12px;
+    }
+    .column-header {
+      display: none;
+    }
+    .orbital-cell {
+      width: 24px;
+      height: 24px;
+      margin: 1px;
+      border: none;
+      border-radius: 2px;
+      background: rgba(26, 26, 46, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 0;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .orbital-cell.s-block {
+      background: rgba(0, 200, 200, 0.3);
+    }
+    .orbital-cell.p-block {
+      background: rgba(200, 200, 0, 0.3);
+    }
+    .orbital-cell.d-block {
+      background: rgba(150, 0, 150, 0.3);
+    }
+    .orbital-cell.f-block {
+      background: rgba(0, 100, 255, 0.3);
+    }
+    .orbital-cell.filled {
+      opacity: 1;
+    }
+    .spin-arrow {
+      font-size: 14px;
+      line-height: 1;
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+    }
+    .spin-arrow.up {
+      color: #4a90e2;
+    }
+    .spin-arrow.down {
+      color: #9b59b6;
+    }
+    .orbital-group {
+      display: inline-flex;
+      gap: 0;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    #electron-controls {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(74, 144, 226, 0.3);
+    }
+    .electron-button {
+      margin: 5px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, rgba(74, 144, 226, 0.3) 0%, rgba(155, 89, 182, 0.3) 100%);
+      border: 2px solid rgba(74, 144, 226, 0.6);
+      border-radius: 6px;
+      color: #e0e0e0;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .electron-button:hover {
+      background: linear-gradient(135deg, rgba(74, 144, 226, 0.5) 0%, rgba(155, 89, 182, 0.5) 100%);
+    }
+    .electron-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="info">
+      <h1>Electron Configuration</h1>
+      <div style="margin: 10px 0;">
+        <a href="/index.html" class="page-link">← Periodic Table</a>
+      </div>
+      <div id="element-info"></div>
+      <div id="electron-controls">
+        <h3>Electron Controls</h3>
+        <div>
+          <button id="add-electron" class="electron-button">+ Add Electron</button>
+          <button id="remove-electron" class="electron-button">- Remove Electron</button>
+          <button id="reset-element" class="electron-button">Reset</button>
+        </div>
+        <div style="margin-top: 10px;">
+          <label style="display: block; margin-bottom: 5px;">Select Element:</label>
+          <select id="element-select" style="width: 100%; padding: 8px; background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(74, 144, 226, 0.6); border-radius: 4px; color: #e0e0e0;">
+          </select>
+        </div>
+      </div>
+    </div>
+    <div id="atom-container"></div>
+    <div id="scheme-container">
+      <div class="scheme-title">Electron Level Scheme</div>
+      <div id="electron-levels" class="electron-levels"></div>
+    </div>
+  </div>
+  <script type="module" src="/js/electron.js"></script>
+</body>
+</html>
